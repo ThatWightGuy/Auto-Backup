@@ -10,6 +10,11 @@ config = configparser.ConfigParser()
 os.chdir(CONFIG_LOCATION)
 config.read("config.ini")
 
+def writeToConfig():
+    os.chdir(CONFIG_LOCATION)
+    with open("config.ini", 'w') as configfile:
+        config.write(configfile)
+
 def getDestination():
     return list(config["Directories"]["destination"].split(','))
 
@@ -19,23 +24,21 @@ def getLoctations():
 def getFileTypes():
     return list(config["FileTypes"]["filetypes"].split(','))
 
+def getLastRunTime():
+    return int(config["Execution"]["lastruntime"])
+
 def setDestination(destination):
     config["Directories"]["destination"] = ",".join(destination)
-
-    os.chdir(CONFIG_LOCATION)
-    with open("config.ini", 'w') as configfile:
-        config.write(configfile)
+    writeToConfig()
 
 def setLocations(locations):
     config["Directories"]["destination"] = ",".join(locations)
-
-    os.chdir(CONFIG_LOCATION)
-    with open("config.ini", 'w') as configfile:
-        config.write(configfile)
+    writeToConfig()
 
 def setFileTypes(filetypes):
     config["FileTypes"]["filetypes"] = ",".join(filetypes)
+    writeToConfig()
 
-    os.chdir(CONFIG_LOCATION)
-    with open("config.ini", 'w') as configfile:
-        config.write(configfile)
+def setLastRunTime(lastRunTime):
+    config["Execution"]["lastruntime"] = lastRunTime
+    writeToConfig()
