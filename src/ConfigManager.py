@@ -38,7 +38,3 @@ def setLocations(locations):
 def setFileTypes(filetypes):
     config["FileTypes"]["filetypes"] = ",".join(filetypes)
     writeToConfig()
-
-def setLastRunTime(lastRunTime):
-    config["Execution"]["lastruntime"] = lastRunTime
-    writeToConfig()

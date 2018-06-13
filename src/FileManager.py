@@ -1,16 +1,34 @@
 import shutil
 import os
-
+import glob
 from src import ConfigManager as cm
+from tkinter.filedialog import askdirectory
 
-file = open("config.json", "w")
+# function to search in folder for files ending in set "filetypes" (sub function)
+# function to copy files to backup (sub function)
 
-print(cm.getDestination())
-cm.setDestination(["butt plugs", "anal beads", 'dildos'])
-print(cm.getDestination())
+class BackupFromLocation():
+    def __init__(self, location):
+        self.location = location
 
-os.chdir(cm.SRC_LOCATION)
+    def copyToBackup(self, file):
+        os.chdir(self.location)
+        for directory in cm.getDestination():
+            shutil.copy(file, directory)
 
-print(os.getcwd())
+    def listAllFiles(self):
+        files = []
 
-shutil.copy("test.txt", os.getcwd() + "\\test")
+        os.chdir(self.location)
+        for filetype in cm.getFileTypes():
+            files += glob.glob("*" + filetype)
+
+        return files
+
+    def backupFromLocation(self):
+        for file in self.listAllFiles():
+            self.copyToBackup(file)
+
+for location in cm.getLoctations():
+    backup = BackupFromLocation(location)
+    backup.backupFromLocation()
