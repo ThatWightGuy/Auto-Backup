@@ -1,4 +1,4 @@
-# Parses and manages the config.ini file. Not to be confused with ConfigMenu (to be implemented later)
+# Parses and manages the config.ini file.
 import os
 import configparser
 
@@ -9,32 +9,61 @@ config = configparser.ConfigParser()
 
 os.chdir(CONFIG_LOCATION)
 config.read("config.ini")
+os.chdir(SRC_LOCATION)
 
 def writeToConfig():
     os.chdir(CONFIG_LOCATION)
     with open("config.ini", 'w') as configfile:
         config.write(configfile)
+    os.chdir(SRC_LOCATION)
 
 def getDestination():
-    return list(config["Directories"]["destination"].split(','))
+    os.chdir(CONFIG_LOCATION)
+    destinations = list()
+
+    if config["Directories"]["destination"] != '':
+        destinations = config["Directories"]["destination"].split(',')
+
+    return destinations
 
 def getLoctations():
-    return list(config["Directories"]["locations"].split(','))
+    os.chdir(CONFIG_LOCATION)
+    locations = list()
+
+    if config["Directories"]["locations"] != '':
+        locations = config["Directories"]["locations"].split(',')
+
+    return locations
 
 def getFileTypes():
-    return list(config["FileTypes"]["filetypes"].split(','))
+    os.chdir(CONFIG_LOCATION)
+    fileTypes = list()
 
-def getLastRunTime():
-    return int(config["Execution"]["lastruntime"])
+    if config["FileTypes"]["filetypes"] != '':
+        fileTypes = config["FileTypes"]["filetypes"].split(',')
+
+    return fileTypes
+
+def getTimeInterval():
+    return 60*int(config["Execution"]["runtimeinterval"])
 
 def setDestination(destination):
-    config["Directories"]["destination"] = ",".join(destination)
+    curDestinations = getDestination()
+    curDestinations.append(destination)
+    config["Directories"]["destination"] = ",".join(curDestinations)
+
     writeToConfig()
 
-def setLocations(locations):
-    config["Directories"]["destination"] = ",".join(locations)
+def setLocations(location):
+    curLocations = getLoctations()
+    curLocations.append(location)
+    config["Directories"]["locations"] = ",".join(curLocations)
+
     writeToConfig()
 
 def setFileTypes(filetypes):
     config["FileTypes"]["filetypes"] = ",".join(filetypes)
     writeToConfig()
+
+def setTimeInterval(interval):
+    config["Execution"]["runtimeinterval"] = interval
