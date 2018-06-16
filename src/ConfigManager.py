@@ -62,8 +62,9 @@ def setLocations(location):
     writeToConfig()
 
 def setFileTypes(filetypes):
-    config["FileTypes"]["filetypes"] = ",".join(filetypes)
+    config["FileTypes"]["filetypes"] = filetypes
     writeToConfig()
 
 def setTimeInterval(interval):
-    config["Execution"]["runtimeinterval"] = interval
+    config["Execution"]["runtimeinterval"] = str(interval)
+    writeToConfig()
