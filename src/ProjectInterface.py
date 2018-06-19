@@ -90,6 +90,81 @@ class interval():
 def setInterval():
     interval()
 
+class EditLocation:
+    def __init__(self):
+        self.locationWindow = tk.Toplevel(window)
+        self.locationWindow.resizable(width=False, height=False)
+        self.locationWindow.geometry("300x62")
+        self.locationWindow.title("Edit Backup Locations")
+        self.locationLabel = tk.Label(self.locationWindow, text="Manually Add/Delete Backup Locations")
+        self.locationLabel.pack()
+        self.locationEntry = tk.Entry(self.locationWindow, width=50, justify=tk.CENTER)
+        self.locationEntry.insert(tk.END, ','.join(cm.getLoctations()))
+        self.locationEntry.pack()
+        self.locationButton = tk.Button(self.locationWindow, text="Apply", bd=0, command=self.destroy)
+        self.locationButton.pack()
+
+    def destroy(self):
+        writeToLog("Locations Set:")
+
+        if self.locationEntry.get() != '':
+            writeToLog(', '.join(self.locationEntry.get().split(',')) + '\n')
+        else:
+            writeToLog("None\n")
+
+        cm.editLocaions(self.locationEntry.get().split(','))
+
+        os.chdir(cm.SRC_LOCATION)
+        self.locationWindow.destroy()
+
+def locationEdit():
+    EditLocation()
+
+class EditDestination:
+    def __init__(self):
+        self.destinationWindow = tk.Toplevel(window)
+        self.destinationWindow.resizable(width=False, height=False)
+        self.destinationWindow.geometry("300x62")
+        self.destinationWindow.title("Edit Backup Destinations")
+        self.destinationLabel = tk.Label(self.destinationWindow, text="Manually Add/Delete Backup Destinations")
+        self.destinationLabel.pack()
+        self.destinationEntry = tk.Entry(self.destinationWindow, width=50, justify=tk.CENTER)
+        self.destinationEntry.insert(tk.END, ','.join(cm.getDestination()))
+        self.destinationEntry.pack()
+        self.destinationButton = tk.Button(self.destinationWindow, text="Apply", bd=0, command=self.destroy)
+        self.destinationButton.pack()
+
+    def destroy(self):
+        writeToLog("Locations Set:")
+
+        if self.destinationEntry.get() != '':
+            writeToLog(', '.join(self.destinationEntry.get().split(',')) + '\n')
+        else:
+            writeToLog("None\n")
+
+        cm.editDestinations(self.destinationEntry.get().split(','))
+
+        os.chdir(cm.SRC_LOCATION)
+        self.destinationWindow.destroy()
+
+def destinationEdit():
+    EditDestination()
+
+def saveLog():
+    logtext.config(state="normal")
+    os.chdir(cm.CONFIG_LOCATION + "/logs")
+
+    with open('log-' + str(int(time.time())) + ".txt", 'w') as log:
+        log.write(logtext.get('1.0',tk.END))
+
+    os.chdir(cm.SRC_LOCATION)
+    logtext.config(state="disabled")
+
+def clearLog():
+    logtext.config(state="normal")
+    logtext.delete('1.0', tk.END)
+    logtext.config(state="disabled")
+
 def run():
     writeToLog("Starting Backup...")
     totalFiles = 0
@@ -111,6 +186,7 @@ def runPerSetInterval():
 
 def startBackup():
     menubar.entryconfig("Options", state="disabled")
+    menubar.entryconfig("Log", state="disabled")
     global runBackup
     runBackup = True
     startbutton.config(state="disabled")
@@ -119,6 +195,7 @@ def startBackup():
 
 def quitBackup():
     menubar.entryconfig("Options", state="normal")
+    menubar.entryconfig("Log", state="normal")
     global runBackup
     runBackup = False
     startbutton.config(state="normal")
@@ -134,12 +211,22 @@ logtext.pack()
 # Menu
 menubar = tk.Menu(window)
 filemenu = tk.Menu(menubar, tearoff=0)
+logmenu = tk.Menu(menubar,  tearoff=0)
 
+# File Menu
 filemenu.add_command(label="Add Backup Location...", command=addBackupLocation)
 filemenu.add_command(label="Add Backup Destination...", command=addBackupDestination)
 filemenu.add_command(label="Set File Types...", command=setFileTypes)
-filemenu.add_command(label="Set Frequency Of Backup", command=setInterval)
+filemenu.add_command(label="Set Frequency Of Backup...", command=setInterval)
+filemenu.add_separator()
+filemenu.add_command(label="Edit Backup Locations...", command=locationEdit)
+filemenu.add_command(label="Edit Backup Destinations...", command=destinationEdit)
 menubar.add_cascade(label="Options", menu=filemenu)
+
+# Log Menu
+logmenu.add_command(label="Save Log", command=saveLog)
+logmenu.add_command(label="Clear Log", command=clearLog)
+menubar.add_cascade(label="Log", menu=logmenu)
 
 # Start/Stop Buttons
 buttonframe = tk.Frame(window)

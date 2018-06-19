@@ -30,4 +30,3 @@ class BackupFromLocation():
     def backupFromLocation(self):
         for file in self.listAllFiles():
             self.copyToBackup(file)
-

@@ -21,8 +21,8 @@ def getDestination():
     os.chdir(CONFIG_LOCATION)
     destinations = list()
 
-    if config["Directories"]["destination"] != '':
-        destinations = config["Directories"]["destination"].split(',')
+    if config["Directories"]["destinations"] != '':
+        destinations = config["Directories"]["destinations"].split(',')
 
     return destinations
 
@@ -50,7 +50,7 @@ def getTimeInterval():
 def setDestination(destination):
     curDestinations = getDestination()
     curDestinations.append(destination)
-    config["Directories"]["destination"] = ",".join(curDestinations)
+    config["Directories"]["destinations"] = ",".join(curDestinations)
 
     writeToConfig()
 
@@ -58,6 +58,21 @@ def setLocations(location):
     curLocations = getLoctations()
     curLocations.append(location)
     config["Directories"]["locations"] = ",".join(curLocations)
+
+    writeToConfig()
+
+def editDestinations(destinations):
+    if destinations != "":
+        config["Directories"]["destinations"] = ",".join(destinations)
+    else:
+        config["Directories"]["destinations"] = destinations
+    writeToConfig()
+
+def editLocaions(locations):
+    if locations != "":
+        config["Directories"]["locations"] = ",".join(locations)
+    else:
+        config["Directories"]["locations"] = locations
 
     writeToConfig()
 
